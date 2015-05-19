@@ -1,0 +1,165 @@
+<!DOCTYPE html>   
+<head>   
+<meta charset="UTF-8">  
+<title>移动的小方块</title>  
+<script >
+	if(window.DeviceMotionEvent){  
+            window.addEventListener("devicemotion",deviceMotionHandler,false);  
+       }else{  
+         alert("本设备不支持摇一摇");  
+       }
+	var x=400;
+	var y=650;
+	var vx=0.0;
+	var vy=0.0;
+
+	var nowinTime=1.0;
+	var inTime=1.0;
+
+	var context;
+	
+	var width,height;
+	var context;
+	var angle = 0;
+
+	var time=400;
+	var gaintime=0;
+	var needgaintime=20;
+	var score=0;
+	var distime=0;
+	
+	var x_rotate,y_rotate;
+	
+function draw(id)
+{
+   /* var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
+	document.body.insertAdjacentHTML("beforeEnd", myCanvas);*/
+/*	var myCanvas = document.createElement("canvas");
+	myCanvas.setAttribute("width", screen.availWidth);
+	myCanvas.setAttribute("height", screen.availHeight);
+	myCanvas.setAttribute("id", "canvas");
+	document.body.appendChild(myCanvas);*/
+
+	var canvas = document.getElementById(id);  
+    if (canvas == null)  
+        return false;  
+    context = canvas.getContext('2d'); 
+  	width=canvas.width;
+    height=canvas.height;
+    
+    setInterval(rotate,50);         //十分之一秒
+}
+function rotate()
+{   
+    if (time>0)
+	{
+		time--;
+		distime--;
+		context.clearRect(0,0,width,height);
+		
+		//back
+/*		image_background = new Image();
+		image_background.src = "blue.png";
+		context.drawImage(image_background,0,0,width,height);*/
+		
+		//fish
+		image = new Image();
+		image.src = "fish.png";
+		
+		//net
+		image_net = new Image();
+		image_net.src = "net.png";
+		context.drawImage(image_net,300,500,400,400);
+		
+		
+		//text
+		if(time<100)
+		{
+			context.fillStyle='red';
+		}else
+		{
+			context.fillStyle='green';
+		}		
+		context.font='italic 80px sans-serif';
+		context.textBaseline='top';		
+		context.fillText("time: "+parseInt(time/20),0,0);
+		context.fillStyle='blue';
+		context.fillText("score: "+score,width-350,0);
+		
+		//rotate
+		nowinTime+=0.1;
+		if (nowinTime>=inTime)
+		{		
+			angle=2*Math.PI*Math.random();
+			vx=Math.cos(angle)*12;
+			vy=Math.sin(angle)*12;
+			nowinTime = 0;
+			
+		}
+	
+		//move
+		x+=x_rotate*5+parseInt(vx);
+		y+=parseInt(vy)-y_rotate*5;
+		
+		//boundary
+		if(x<0)
+		{
+			x=0;
+		}
+		if(y<0)
+		{
+			y=0;
+		}
+		if(x+200>width)
+		{
+			x=width-200;
+		}
+		if(y+200>height)
+		{
+			y=height-200;
+		}
+
+        if(distime<=0)
+		{
+			context.drawImage(image,x,y,200,200);
+		}		
+		
+		//gain
+		if(x>300&&x<550&&y>500&&y<750)
+		{
+			gaintime++;
+			if(gaintime==needgaintime)
+			{
+				score++;
+				gaintime=0;
+				x=Math.random()*width;
+			    y=Math.random()*height;
+				if(distime<=0)
+				{
+					distime=5;
+				}
+				
+			}
+		}
+		else
+		{
+			gaintime=0;
+		}
+
+		
+	}
+
+}
+
+function deviceMotionHandler(eventData){  
+            var acceleration = eventData.accelerationIncludingGravity; 
+            x_rotate=acceleration.x;  
+            y_rotate=acceleration.y;                   
+ }  
+</script>  
+</head>  
+<body onload="draw('canvas');">   
+<canvas id="canvas" width=1000 height=1500/>
+
+</body>  
+</html>
