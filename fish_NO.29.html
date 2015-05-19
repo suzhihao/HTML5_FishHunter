@@ -1,7 +1,7 @@
 <!DOCTYPE html>   
 <head>   
 <meta charset="UTF-8">  
-<title>移动的小方块</title>  
+<title>fishhunter</title>  
 <script >
 	if(window.DeviceMotionEvent){  
             window.addEventListener("devicemotion",deviceMotionHandler,false);  
@@ -69,7 +69,7 @@ function rotate()
 		//net
 		image_net = new Image();
 		image_net.src = "net.png";
-		context.drawImage(image_net,300,500,400,400);
+		context.drawImage(image_net,250,450,500,500);
 		
 		
 		//text
@@ -121,11 +121,11 @@ function rotate()
 
         if(distime<=0)
 		{
-			context.drawImage(image,x,y,200,200);
+			context.drawImage(image,x,y,300,300);
 		}		
 		
 		//gain
-		if(x>300&&x<550&&y>500&&y<750)
+		if(x>250&&x<550&&y>450&&y<700)
 		{
 			gaintime++;
 			if(gaintime==needgaintime)
