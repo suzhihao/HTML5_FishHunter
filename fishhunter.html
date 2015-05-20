@@ -30,6 +30,9 @@
 	
 	var x_rotate,y_rotate;
 	
+	var fish_png;
+	var pic_num=1;
+	
 function draw(id)
 {
    /* var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
@@ -47,7 +50,7 @@ function draw(id)
   	width=canvas.width;
     height=canvas.height;
     
-    setInterval(rotate,50);         //十分之一秒
+    setInterval(rotate,1000/20);         //十分之一秒
 }
 function rotate()
 {   
@@ -64,8 +67,19 @@ function rotate()
 		
 		//fish
 		image = new Image();
-		image.src = "fish.png";
-		
+		if(pic_num<10){
+			fish_png ="fish_png/fish_00"+pic_num+".png";
+			pic_num++;
+		}else if(pic_num<=27){
+			fish_png ="fish_png/fish_0"+pic_num+".png";
+			pic_num++;
+		}else{
+			pic_num = 1;
+		}
+
+		image.src = fish_png;
+		//image.src = "fish_png/fish_001.png";
+		//image.src = "testgif.gif";
 		//net
 		image_net = new Image();
 		image_net.src = "net.png";
@@ -102,26 +116,26 @@ function rotate()
 		y+=parseInt(vy)-y_rotate*5;
 		
 		//boundary
-		if(x<0)
+		if(x<-150)
 		{
-			x=0;
+			x=-150;
 		}
-		if(y<0)
+		if(y<-150)
 		{
-			y=0;
+			y=-150;
 		}
-		if(x+200>width)
+		if(x+250>width)
 		{
-			x=width-200;
+			x=width-250;
 		}
-		if(y+200>height)
+		if(y+250>height)
 		{
-			y=height-200;
+			y=height-250;
 		}
 
         if(distime<=0)
 		{
-			context.drawImage(image,x,y,300,300);
+			context.drawImage(image,x,y,400,400);
 		}		
 		
 		//gain
