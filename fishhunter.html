@@ -1,21 +1,31 @@
 <!DOCTYPE html>   
 <head>   
-<meta charset="UTF-8">  
-<title>fishhunter</title>  
+<title>fishhunter</title> 
+
+
+</head>  
+<body onload="draw('canvas')">  
+
+<canvas id="canvas" width=1000 height=1500/>
+
+</body>  
+
 <script >
-	if(window.DeviceMotionEvent){  
+
+ 	if(window.DeviceMotionEvent){  
             window.addEventListener("devicemotion",deviceMotionHandler,false);  
        }else{  
          alert("本设备不支持摇一摇");  
        }
 	var x=400;
 	var y=650;
+	var nx=150,ny=350;
 	var vx=0.0;
 	var vy=0.0;
-
-	var nowinTime=1.0;
-	var inTime=1.0;
-
+	var fish_sizex=700,fish_sizey=600,net_sizex=700,net_sizey=800;
+	var distance=0.0;
+	var nowinTime=2.0;
+	var inTime=2.0;
 	var context;
 	
 	var width,height;
@@ -28,20 +38,20 @@
 	var score=0;
 	var distime=0;
 	
-	var x_rotate,y_rotate;
-	
+	var x_rotate,y_rotate;	
 	var fish_png;
 	var pic_num=1;
 	
+	
 function draw(id)
 {
-   /* var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
-	document.body.insertAdjacentHTML("beforeEnd", myCanvas);*/
-/*	var myCanvas = document.createElement("canvas");
+    var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
+	document.body.insertAdjacentHTML("beforeEnd", myCanvas);
+	var myCanvas = document.createElement("canvas");
 	myCanvas.setAttribute("width", screen.availWidth);
 	myCanvas.setAttribute("height", screen.availHeight);
 	myCanvas.setAttribute("id", "canvas");
-	document.body.appendChild(myCanvas);*/
+	document.body.appendChild(myCanvas);
 
 	var canvas = document.getElementById(id);  
     if (canvas == null)  
@@ -50,7 +60,7 @@ function draw(id)
   	width=canvas.width;
     height=canvas.height;
     
-    setInterval(rotate,1000/20);         //十分之一秒
+    setInterval(rotate,50);         //十分之一秒
 }
 function rotate()
 {   
@@ -65,7 +75,6 @@ function rotate()
 		image_background.src = "blue.png";
 		context.drawImage(image_background,0,0,width,height);*/
 		
-		//fish
 		image = new Image();
 		if(pic_num<10){
 			fish_png ="fish_png/fish_00"+pic_num+".png";
@@ -83,8 +92,8 @@ function rotate()
 		//net
 		image_net = new Image();
 		image_net.src = "net.png";
-		context.drawImage(image_net,150,350,700,800);
-		
+		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
+		image.id = "im";
 		
 		//text
 		if(time<100)
@@ -100,46 +109,72 @@ function rotate()
 		context.fillStyle='blue';
 		context.fillText("score: "+score,width-350,0);
 		
+		
 		//rotate
 		nowinTime+=0.1;
+		
 		if (nowinTime>=inTime)
-		{		
-			angle=2*Math.PI*Math.random();
+		{	
+			var changeangle=Math.PI*Math.random()-0.5*Math.PI;
+			angle+=changeangle;	
 			vx=Math.cos(angle)*12;
 			vy=Math.sin(angle)*12;
 			nowinTime = 0;
+			 
+		}
+		if(distime<=0)
+		{
 			
-		}
-	
-		//move
-		x+=x_rotate*5+parseInt(vx);
-		y+=parseInt(vy)-y_rotate*5;
+			context.drawImage(image,x,y,fish_sizex,fish_sizey);
+		}	
 		
-		//boundary
-		if(x<-150)
+		
+		//move
+		x+=parseInt(vx);
+		y+=parseInt(vy);
+		nx+=x_rotate*8;
+		ny-=y_rotate*8;
+		//fish_boundary
+		if(x<-fish_sizex*0.4)
 		{
-			x=-150;
+			x=-fish_sizex*0.4;
 		}
-		if(y<-150)
+		if(y<-fish_sizey*0.3)
 		{
-			y=-150;
+			y=-fish_sizey*0.3;
 		}
-		if(x+250>width)
+		if(x+fish_sizex*0.6>width)
 		{
-			x=width-250;
+			x=width-fish_sizex*0.6;
 		}
-		if(y+250>height)
+		if(y+fish_sizey*0.7>height)
 		{
-			y=height-250;
+			y=height-fish_sizey*0.7;
+		}
+		
+		//net_boundary
+		if(nx<-net_sizex*0.4)
+		{
+			nx=-net_sizex*0.4;
+		}
+		if(ny<-net_sizey*0.3)
+		{
+			ny=-net_sizey*0.3;
+		}
+		if(nx+net_sizex*0.5>width)
+		{
+			nx=width-net_sizex*0.5;
+		}
+		if(ny+net_sizey*0.5>height)
+		{
+			ny=height-net_sizey*0.5;
 		}
 
-        if(distime<=0)
-		{
-			context.drawImage(image,x,y,400,400);
-		}		
+	
 		
 		//gain
-		if(x>200&&x<500&&y>400&&y<700)
+		distance = Math.sqrt(Math.pow((x+fish_sizex*0.5-nx-net_sizex*0.5),2)+Math.pow((y+fish_sizey*0.5-ny-net_sizey*0.4),2));
+		if(distance<net_sizex*0.4)
 		{
 			gaintime++;
 			if(gaintime==needgaintime)
@@ -171,9 +206,4 @@ function deviceMotionHandler(eventData){
             y_rotate=acceleration.y;                   
  }  
 </script>  
-</head>  
-<body onload="draw('canvas');">   
-<canvas id="canvas" width=1000 height=1500/>
-
-</body>  
 </html>
