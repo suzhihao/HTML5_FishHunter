@@ -25,13 +25,12 @@
 	var fish_sizex=700,fish_sizey=600,net_sizex=700,net_sizey=800;
 	var distance=0.0;
 	var nowinTime=2.0;
-	var inTime=2.0;
-	var context;
+	var inTime=2.0, rotate_time=0.5;
 	
 	var width,height;
 	var context;
-	var angle = 0;
-
+	var angle = -0.5*Math.PI;
+	var changeangle=0.0;
 	var time=400;
 	var gaintime=0;
 	var needgaintime=20;
@@ -41,22 +40,29 @@
 	var x_rotate,y_rotate;	
 	var fish_png;
 	var pic_num=1;
-	
-	
+	var myCanvas;
+	var context_fish;
 function draw(id)
 {
-    var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
+/*  var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
 	document.body.insertAdjacentHTML("beforeEnd", myCanvas);
 	var myCanvas = document.createElement("canvas");
 	myCanvas.setAttribute("width", screen.availWidth);
 	myCanvas.setAttribute("height", screen.availHeight);
 	myCanvas.setAttribute("id", "canvas");
-	document.body.appendChild(myCanvas);
+	document.body.appendChild(myCanvas);*/
 
-	var canvas = document.getElementById(id);  
+	var canvas = document.getElementById(id);
+	myCanvas = document.createElement("canvas");
+	myCanvas.setAttribute("width", fish_sizex);
+	myCanvas.setAttribute("height", fish_sizey);
+	myCanvas.setAttribute("id", "canvas_fish");
+	document.body.appendChild(myCanvas);
     if (canvas == null)  
         return false;  
     context = canvas.getContext('2d'); 
+	context_fish = myCanvas.getContext('2d');
+	context_fish.translate(0.5*fish_sizex,0.5*fish_sizey);
   	width=canvas.width;
     height=canvas.height;
     
@@ -69,7 +75,7 @@ function rotate()
 		time--;
 		distime--;
 		context.clearRect(0,0,width,height);
-		
+		context_fish.clearRect(-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
 		//back
 /*		image_background = new Image();
 		image_background.src = "blue.png";
@@ -87,13 +93,15 @@ function rotate()
 		}
 
 		image.src = fish_png;
+		
+		
 		//image.src = "fish_png/fish_001.png";
 		//image.src = "testgif.gif";
 		//net
 		image_net = new Image();
 		image_net.src = "net.png";
 		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
-		image.id = "im";
+
 		
 		//text
 		if(time<100)
@@ -111,30 +119,27 @@ function rotate()
 		
 		
 		//rotate
-		nowinTime+=0.1;
+		nowinTime+=0.05;
 		
 		if (nowinTime>=inTime)
 		{	
-			var changeangle=Math.PI*Math.random()-0.5*Math.PI;
-			angle+=changeangle;	
-			vx=Math.cos(angle)*12;
-			vy=Math.sin(angle)*12;
-			nowinTime = 0;
-			 
+			changeangle=Math.PI*Math.random()-0.5*Math.PI;
+			nowinTime = 0;			
 		}
-		if(distime<=0)
+		if(nowinTime<inTime*0.5)
 		{
-			
-			context.drawImage(image,x,y,fish_sizex,fish_sizey);
-		}	
-		
-		
+			angle+=changeangle/20;	
+		    context_fish.rotate(changeangle/20);
+		}
 		//move
+					
+		vx=Math.cos(angle)*(-12);
+		vy=Math.sin(angle)*(-12);
 		x+=parseInt(vx);
 		y+=parseInt(vy);
 		nx+=x_rotate*8;
 		ny-=y_rotate*8;
-		//fish_boundary
+		//fish_boundary           
 		if(x<-fish_sizex*0.4)
 		{
 			x=-fish_sizex*0.4;
@@ -170,6 +175,12 @@ function rotate()
 			ny=height-net_sizey*0.5;
 		}
 
+		//draw
+		context_fish.drawImage(image,-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
+		if(distime<=0)
+		{			
+			context.drawImage(myCanvas,x,y,fish_sizex,fish_sizey);
+		}	
 	
 		
 		//gain
