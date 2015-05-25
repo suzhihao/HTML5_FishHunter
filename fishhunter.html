@@ -151,24 +151,29 @@ function rotate()
 		vy=Math.sin(angle)*(-15);
 		x+=parseInt(vx);
 		y+=parseInt(vy);
-		nx+=x_rotate*8;
-		ny-=y_rotate*8;
+		nx+=x_rotate*10;
+		ny-=y_rotate*10;
 		//fish_boundary           
 		if(x<-fish_sizex*0.4)
 		{
 			x=-fish_sizex*0.4;
+			
+			
 		}
 		if(y<-fish_sizey*0.3)
 		{
 			y=-fish_sizey*0.3;
+			
 		}
 		if(x+fish_sizex*0.6>width)
 		{
 			x=width-fish_sizex*0.6;
+			
 		}
 		if(y+fish_sizey*0.7>height)
 		{
 			y=height-fish_sizey*0.7;
+			
 		}
 		
 		//net_boundary
@@ -208,10 +213,14 @@ function rotate()
 				gaintime=0;
 				x=0.5*Math.random()*width;
 			    y=0.5*Math.random()*height;
-				changeangle=2*Math.PI*Math.random();
+				
+				changeangle=Math.PI*Math.random()+0.5*Math.PI;
+				angle+=changeangle;
+				context_fish.rotate(changeangle);
 				nowinTime=2;
 				vx=0;
 				vy=0;
+				
 				if(distime<=0)
 				{
 					distime=5;
