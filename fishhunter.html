@@ -42,6 +42,20 @@
 	var pic_num=1;
 	var myCanvas;
 	var context_fish;
+	
+	image = new Image();
+		if(pic_num<10){
+			fish_png ="fish_png/fish_00"+pic_num+".png";
+			pic_num++;
+		}else if(pic_num<=27){
+			fish_png ="fish_png/fish_0"+pic_num+".png";
+			pic_num++;
+		}else{
+			pic_num = 1;
+		}
+
+		image.src = fish_png;
+	
 function draw(id)
 {
 /*  var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
@@ -133,8 +147,8 @@ function rotate()
 		}
 		//move
 					
-		vx=Math.cos(angle)*(-12);
-		vy=Math.sin(angle)*(-12);
+		vx=Math.cos(angle)*(-15);
+		vy=Math.sin(angle)*(-15);
 		x+=parseInt(vx);
 		y+=parseInt(vy);
 		nx+=x_rotate*8;
@@ -192,8 +206,12 @@ function rotate()
 			{
 				score++;
 				gaintime=0;
-				x=Math.random()*width;
-			    y=Math.random()*height;
+				x=0.5*Math.random()*width;
+			    y=0.5*Math.random()*height;
+				changeangle=2*Math.PI*Math.random();
+				nowinTime=2;
+				vx=0;
+				vy=0;
 				if(distime<=0)
 				{
 					distime=5;
