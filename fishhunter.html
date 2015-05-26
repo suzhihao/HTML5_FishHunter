@@ -15,33 +15,36 @@
  	if(window.DeviceMotionEvent){  
             window.addEventListener("devicemotion",deviceMotionHandler,false);  
        }else{  
-         alert("本设备不支持摇一摇");  
+         alert("本设备不支持重力感应");  
        }
-	var x=400;
-	var y=650;
-	var nx=150,ny=350;
-	var vx=0.0;
-	var vy=0.0;
-	var fish_sizex=700,fish_sizey=600,net_sizex=700,net_sizey=800;
-	var distance=0.0;
-	var nowinTime=2.0;
-	var inTime=2.0, rotate_time=0.5;
 	
+	var myCanvas;//about canvas
 	var width,height;
-	var context;
-	var angle = -0.5*Math.PI;
-	var changeangle=0.0;
-	var time=400;
-	var gaintime=0;
-	var needgaintime=20;
-	var score=0;
-	var distime=0;
-	
-	var x_rotate,y_rotate;	
+	var context;		
 	var fish_png;
 	var pic_num=1;
-	var myCanvas;
 	var context_fish;
+	
+	var time=400;//game's time 20s*20=400
+
+	var x=300,y=650;//fish position
+	var nx=150,ny=350;//net position
+	var vx=0.0,vy=0.0;//fish speed
+	var fish_sizex=700,fish_sizey=600,net_sizex=700,net_sizey=800;//fish net size
+	var distance=0.0;
+	
+	var nowinTime=99.0;//controll fish's action
+	var inTime=1.5//an interval
+	var rotate_time=0.5;//rotate time in an interval
+	var angle = 1.5*Math.PI;	
+	var x_rotate,y_rotate;
+	var changeangle=0.0;
+	
+	var score=0;//catch score
+	var gaintime=0;
+	var needgaintime=20;//need time to catch
+	
+	var distime=0;//disappear after catch
 	
 	image = new Image();
 		if(pic_num<10){
@@ -58,6 +61,7 @@
 	
 function draw(id)
 {
+	//some old unused code
 /*  var myCanvas = "<canvas id='canvas' width='" + screen.availWidth + "px' height='"+ screen.availHeight + "px'></canvas>";
 	document.body.insertAdjacentHTML("beforeEnd", myCanvas);
 	var myCanvas = document.createElement("canvas");
@@ -71,7 +75,7 @@ function draw(id)
 	myCanvas.setAttribute("width", fish_sizex);
 	myCanvas.setAttribute("height", fish_sizey);
 	myCanvas.setAttribute("id", "canvas_fish");
-	//document.body.appendChild(myCanvas);
+	
     if (canvas == null)  
         return false;  
     context = canvas.getContext('2d'); 
@@ -80,21 +84,21 @@ function draw(id)
   	width=canvas.width;
     height=canvas.height;
     
-    setInterval(rotate,50);         //十分之一秒
+    setInterval(rotate,50);         //1000分之20秒
 }
 function rotate()
 {   
     if (time>0)
 	{
+		//calculate time
 		time--;
 		distime--;
+		
+		//clear
 		context.clearRect(0,0,width,height);
 		context_fish.clearRect(-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
-		//back
-/*		image_background = new Image();
-		image_background.src = "blue.png";
-		context.drawImage(image_background,0,0,width,height);*/
 		
+		//fish animate
 		image = new Image();
 		if(pic_num<10){
 			fish_png ="fish_png/fish_00"+pic_num+".png";
@@ -107,17 +111,12 @@ function rotate()
 		}
 
 		image.src = fish_png;
-		
-		
-		//image.src = "fish_png/fish_001.png";
-		//image.src = "testgif.gif";
 		//net
 		image_net = new Image();
 		image_net.src = "net.png";
 		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
 
-		
-		//text
+		//show text and change color in emergency
 		if(time<100)
 		{
 			context.fillStyle='red';
@@ -131,33 +130,82 @@ function rotate()
 		context.fillStyle='blue';
 		context.fillText("score: "+score,width-350,0);
 		
-		
 		//rotate
-		nowinTime+=0.05;
-		
+		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
-		{	
+		{
+			inTime=Math.random()+1.0;
 			changeangle=Math.PI*Math.random()-0.5*Math.PI;
-			nowinTime = 0;			
+			if (angle<Math.PI && y<100)
+			{
+				if (angle<0.5*Math.PI)
+				{
+					changeangle=2*(0-angle);
+				}
+				else
+				{
+					changeangle=2*(Math.PI-angle);
+				}
+			}
+			if (angle>=Math.PI && y+fish_sizey*0.7>height-200)
+			{
+				if (angle>1.5*Math.PI)
+				{
+					changeangle=2*(2*Math.PI-angle);
+				}
+				else
+				{
+					changeangle=2*(Math.PI-angle);
+				}
+			}
+			if ((angle<0.5*Math.PI|| angle>1.5*Math.PI) && x<100)
+			{
+				if (angle<0.5*Math.PI)
+				{
+					changeangle=2*(0.5*Math.PI-angle);
+				}
+				else
+				{
+					changeangle=2*(1.5*Math.PI-angle);
+				}			
+			}
+			if (angle>=0.5*Math.PI&& angle<=1.5*Math.PI && x+fish_sizex*0.6>width-200)
+			{
+				if (angle<Math.PI)
+				{
+					changeangle=2*(0.5*Math.PI-angle);
+				}
+				else
+				{
+					changeangle=2*(1.5*Math.PI-angle);
+				}
+			}
+			nowinTime = 0;
 		}
 		if(nowinTime<inTime*0.5)
 		{
-			angle+=changeangle/20;	
+			angle=angle+changeangle/20-2*Math.PI;	
+			while(angle<0)
+			{
+				angle+=2*Math.PI;
+			}
 		    context_fish.rotate(changeangle/20);
 		}
-		//move
-					
+		
+		//move					
 		vx=Math.cos(angle)*(-15);
 		vy=Math.sin(angle)*(-15);
 		x+=parseInt(vx);
 		y+=parseInt(vy);
+		
+		//controll net
 		nx+=x_rotate*10;
 		ny-=y_rotate*10;
-		//fish_boundary           
+		
+		//fish_boundary
 		if(x<-fish_sizex*0.4)
 		{
-			x=-fish_sizex*0.4;
-			
+			x=-fish_sizex*0.4;			
 			
 		}
 		if(y<-fish_sizey*0.3)
@@ -193,18 +241,17 @@ function rotate()
 		{
 			ny=height-net_sizey*0.5;
 		}
-
+		
 		//draw
 		context_fish.drawImage(image,-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
 		if(distime<=0)
 		{			
 			context.drawImage(myCanvas,x,y,fish_sizex,fish_sizey);
-		}	
-	
+		}
 		
 		//gain
 		distance = Math.sqrt(Math.pow((x+fish_sizex*0.5-nx-net_sizex*0.5),2)+Math.pow((y+fish_sizey*0.5-ny-net_sizey*0.4),2));
-		if(distance<net_sizex*0.4)
+		if(distance<net_sizex*0.4 && distime<=0)
 		{
 			gaintime++;
 			if(gaintime==needgaintime)
@@ -214,28 +261,30 @@ function rotate()
 				x=0.5*Math.random()*width;
 			    y=0.5*Math.random()*height;
 				
-				changeangle=Math.PI*Math.random()+0.5*Math.PI;
-				angle+=changeangle;
+				//relocate
+				changeangle=Math.PI*Math.random()-0.5*Math.PI;
+				angle=angle+changeangle-2*Math.PI;
+				while(angle<0)
+			    {
+				angle+=2*Math.PI;
+			    }
 				context_fish.rotate(changeangle);
-				nowinTime=2;
+				nowinTime=99.0;
 				vx=0;
 				vy=0;
 				
+				//disappear
 				if(distime<=0)
 				{
 					distime=5;
-				}
-				
+				}				
 			}
 		}
 		else
 		{
 			gaintime=0;
-		}
-
-		
+		}		
 	}
-
 }
 
 function deviceMotionHandler(eventData){  
