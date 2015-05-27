@@ -130,7 +130,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.1.0",width-350,150);
+		context.fillText("version: 1.1.1",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -282,7 +282,7 @@ function rotate()
 				//disappear
 				if(distime<=0)
 				{
-					distime=10;
+					distime=20;
 				}				
 			}
 		}
@@ -292,6 +292,7 @@ function rotate()
 		}		
 	}else{
 		alert('time out! score: '+score);
+		time=1200;
 	}
 }
 
