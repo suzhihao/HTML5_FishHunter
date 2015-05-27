@@ -17,6 +17,11 @@
        }else{  
          alert("本设备不支持重力感应");  
        }
+	 //判断手机是安卓还是ios
+	var u = navigator.userAgent, app = navigator.appVersion;
+	//var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
+	var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
 	
 	var myCanvas;//about canvas
 	var width,height;
@@ -25,7 +30,7 @@
 	var pic_num=1;
 	var context_fish;
 	
-	var time=400;//game's time 20s*20=400
+	var time=1200;//game's time 20s*20=400
 
 	var x=300,y=650;//fish position
 	var nx=150,ny=350;//net position
@@ -288,9 +293,14 @@ function rotate()
 }
 
 function deviceMotionHandler(eventData){  
-            var acceleration = eventData.accelerationIncludingGravity; 
-            x_rotate=acceleration.x;  
-            y_rotate=acceleration.y;                   
+	var acceleration = eventData.accelerationIncludingGravity; 
+    if(isiOS){
+		x_rotate=acceleration.x;  
+        y_rotate=acceleration.y; 
+	}else{
+		x_rotate=-acceleration.x;  
+        y_rotate=-acceleration.y;
+	}
  }  
 </script>  
 </html>
