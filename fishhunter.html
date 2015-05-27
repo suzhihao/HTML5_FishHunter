@@ -11,7 +11,7 @@
 </head>  
 <body onload="draw('canvas')">  
 
-<canvas id="canvas" width=1000 height=1500/>
+<canvas id="canvas" width=1000 height=1550/>
 
 </body>  
 
@@ -139,7 +139,9 @@ function rotate()
 		context.fillText("time: "+parseInt(time/20),0,0);
 		context.fillStyle='blue';
 		context.fillText("score: "+score,width-350,0);
-		
+		context.font='italic 30px sans-serif';
+		context.fillStyle='black';
+		context.fillText("version: 1.0",width-350,1550);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
