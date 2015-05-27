@@ -87,9 +87,7 @@ function draw(id)
 }
 function rotate()
 {   
-    image_net = new Image();
-		image_net.src = "net.png";
-		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
+
 	if (time>0)
 	{
 		//calculate time
@@ -114,7 +112,9 @@ function rotate()
 
 		image.src = fish_png;
 		//net
-		
+		image_net = new Image();
+		image_net.src = "net.png";
+		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
 
 		//show text and change color in emergency
 		if(time<100)
@@ -131,7 +131,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.1.3",width-350,150);
+		context.fillText("version: 1.1.4",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -281,7 +281,7 @@ function rotate()
 				vy=0;
 				
 				//disappear
-				if(distime<=0)
+				if(distime<0)
 				{
 					distime=15;
 				}				
