@@ -30,7 +30,8 @@
 	
 	var myCanvas;//about canvas
 	var width,height;
-	var context;		
+	var context;
+	var image,image_net;		
 	var fish_png;
 	var pic_num=1;
 	var context_fish;
@@ -56,19 +57,7 @@
 	
 	var distime=0;//disappear after catch
 	
-	image = new Image();
-		if(pic_num<10){
-			fish_png ="fish_png/fish_00"+pic_num+".png";
-			pic_num++;
-		}else if(pic_num<=27){
-			fish_png ="fish_png/fish_0"+pic_num+".png";
-			pic_num++;
-		}else{
-			pic_num = 1;
-		}
 
-		image.src = fish_png;
-	
 function draw(id)
 {
 	//some old unused code
@@ -141,7 +130,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.0.1",width-350,150);
+		context.fillText("version: 1.1.0",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -259,7 +248,12 @@ function rotate()
 		if(distime<=0)
 		{			
 			context.drawImage(myCanvas,x,y,fish_sizex,fish_sizey);
+		}else{
+			context.font='italic 100px sans-serif';
+			context.fillStyle='black';
+			context.fillText("+1",0.5*width-50,0.5*height);
 		}
+		
 		
 		//gain
 		distance = Math.sqrt(Math.pow((x+fish_sizex*0.5-nx-net_sizex*0.5),2)+Math.pow((y+fish_sizey*0.5-ny-net_sizey*0.4),2));
@@ -288,7 +282,7 @@ function rotate()
 				//disappear
 				if(distime<=0)
 				{
-					distime=5;
+					distime=10;
 				}				
 			}
 		}
@@ -296,6 +290,8 @@ function rotate()
 		{
 			gaintime=0;
 		}		
+	}else{
+		alert('time out! score: '+score);
 	}
 }
 
