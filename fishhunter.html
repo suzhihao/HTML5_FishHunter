@@ -15,7 +15,7 @@
 
 </body>  
 
-<script >
+<script>
 
  	if(window.DeviceMotionEvent){  
             window.addEventListener("devicemotion",deviceMotionHandler,false);  
@@ -43,6 +43,7 @@
 	var vx=0.0,vy=0.0;//fish speed
 	var fish_sizex=700,fish_sizey=600,net_sizex=700,net_sizey=800;//fish net size
 	var distance=0.0;
+	var mousex,mousey;
 	
 	var nowinTime=99.0;//controll fish's action
 	var inTime=1.5//an interval
@@ -54,9 +55,17 @@
 	var score=0;//catch score
 	var gaintime=0;
 	var needgaintime=20;//need time to catch
-	
 	var distime=0;//disappear after catch
 	
+	myCanvas = document.createElement("canvas");
+	myCanvas.setAttribute("width", fish_sizex);
+	myCanvas.setAttribute("height", fish_sizey);
+
+	//开始游戏按钮
+	var startButton = document.createElement("canvas");
+	startButton.setAttribute("width",330);
+	startButton.setAttribute("height", 200);
+
 
 function draw(id)
 {
@@ -69,21 +78,38 @@ function draw(id)
 	myCanvas.setAttribute("id", "canvas");
 	document.body.appendChild(myCanvas);*/
 
+	//获取游戏场景canvas
 	var canvas = document.getElementById(id);
-	myCanvas = document.createElement("canvas");
-	myCanvas.setAttribute("width", fish_sizex);
-	myCanvas.setAttribute("height", fish_sizey);
-	myCanvas.setAttribute("id", "canvas_fish");
-	
-    if (canvas == null)  
-        return false;  
     context = canvas.getContext('2d'); 
-	context_fish = myCanvas.getContext('2d');
-	context_fish.translate(0.5*fish_sizex,0.5*fish_sizey);
   	width=canvas.width;
     height=canvas.height;
+	
+	//获取鱼的canvas
+	context_fish = myCanvas.getContext('2d');
+	context_fish.translate(0.5*fish_sizex,0.5*fish_sizey);
     
-    setInterval(rotate,50);         //1000分之20秒
+	//获取开始按钮canvas
+	context_start = startButton.getContext('2d');
+	context_start.font='italic 100px sans-serif';
+	context_start.fillStyle='black';
+	context_start.fillText("Start",50,130);
+	context_start.beginPath();
+	context_start.moveTo(0,0);
+	context_start.lineTo(330,0);
+	context_start.lineTo(330,200);
+	context_start.lineTo(0,200);
+	context_start.lineTo(0,0);
+	context_start.stroke();
+	context.drawImage(startButton,320,500);
+	//点击开始游戏，触发事件
+	canvas.onclick = function(e){
+		mousex=e.pageX;
+		mousey=e.pageY;
+		getPointOnCanvas(canvas,mousex,mousey);
+		if(mousex>320&&mousex<650&&mousey>500&&mousey<700){
+			setInterval(rotate,50);
+		}
+	};
 }
 function rotate()
 {   
@@ -131,7 +157,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.1.4",width-350,150);
+		context.fillText("version: 1.1.6",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -297,6 +323,14 @@ function rotate()
 	}
 }
 
+//获取鼠标位置
+function getPointOnCanvas(canvas,mousex,mousey){ 
+	var bbox =canvas.getBoundingClientRect(); 
+	mousex=mousex- bbox.left *(canvas.width / bbox.width);
+	mousey=mousey - bbox.top * (canvas.height / bbox.height);
+} 
+
+//获取重力感应
 function deviceMotionHandler(eventData){  
 	var acceleration = eventData.accelerationIncludingGravity; 
     if(isiOS){
