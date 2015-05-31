@@ -31,9 +31,6 @@
 	var myCanvas;//about canvas
 	var width,height;
 	var context;
-	var image,image_net;		
-	var fish_png;
-	var pic_num=1;
 	var context_fish;
 	
 	var time=1200;//game's time 20s*20=400
@@ -66,6 +63,11 @@
 	startButton.setAttribute("width",330);
 	startButton.setAttribute("height", 200);
 
+	//游戏资源
+	var image_net= new Image();		
+	var imgs = new Array();
+	var image = new Image();
+	var pic_num=1;
 
 function draw(id)
 {
@@ -77,6 +79,9 @@ function draw(id)
 	myCanvas.setAttribute("height", screen.availHeight);
 	myCanvas.setAttribute("id", "canvas");
 	document.body.appendChild(myCanvas);*/
+	
+	//加载资源
+	loadImg();
 
 	//获取游戏场景canvas
 	var canvas = document.getElementById(id);
@@ -101,6 +106,7 @@ function draw(id)
 	context_start.lineTo(0,0);
 	context_start.stroke();
 	context.drawImage(startButton,320,500);
+	
 	//点击开始游戏，触发事件
 	canvas.onclick = function(e){
 		mousex=e.pageX;
@@ -124,22 +130,7 @@ function rotate()
 		context.clearRect(0,0,width,height);
 		context_fish.clearRect(-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
 		
-		//fish animate
-		image = new Image();
-		if(pic_num<10){
-			fish_png ="fish_png/fish_00"+pic_num+".png";
-			pic_num++;
-		}else if(pic_num<=27){
-			fish_png ="fish_png/fish_0"+pic_num+".png";
-			pic_num++;
-		}else{
-			pic_num = 1;
-		}
-
-		image.src = fish_png;
-		//net
-		image_net = new Image();
-		image_net.src = "net.png";
+		//draw net
 		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
 
 		//show text and change color in emergency
@@ -157,7 +148,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.1.6",width-350,150);
+		context.fillText("version: 1.1.8",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -271,6 +262,12 @@ function rotate()
 		}
 		
 		//draw
+		if(pic_num<=27){
+			pic_num++;
+		}else{
+			pic_num = 1;
+		}
+		image=imgs[pic_num-1];
 		context_fish.drawImage(image,-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
 		if(distime<0)
 		{			
@@ -320,6 +317,27 @@ function rotate()
 	}else{
 		alert('time out! score: '+score);
 		time=1200;
+	}
+}
+
+//加载资源
+function loadImg(){
+	try{
+		var fish_png;
+		image_net.src = "net.png";
+		for(pic_num=1;pic_num<=27;pic_num++){
+			if(pic_num<10){
+				fish_png ="fish_png/fish_00"+pic_num+".png";
+				pic_num++;
+			}else{
+				fish_png ="fish_png/fish_0"+pic_num+".png";
+				pic_num++;
+			}
+			image.src = fish_png;
+			imgs[pic_num-1]=image;
+		}
+	}catch(e){
+		alert("资源加载失败！");
 	}
 }
 
