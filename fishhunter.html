@@ -65,7 +65,7 @@
 
 	//游戏资源
 	var image_net= new Image();		
-	var imgs = new Array();
+	//var imgs = new Array();
 	var image = new Image();
 	var pic_num=1,num=1;
 
@@ -130,6 +130,18 @@ function rotate()
 		context.clearRect(0,0,width,height);
 		context_fish.clearRect(-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
 		
+		if(pic_num<10){
+			fish_png ="fish_png/fish_00"+pic_num+".png";
+			pic_num++;
+		}else if(pic_num<=27){
+			fish_png ="fish_png/fish_0"+pic_num+".png";
+			pic_num++;
+		}else{
+			pic_num = 1;
+		}
+
+		image.src = fish_png;
+		
 		//draw net
 		context.drawImage(image_net,nx,ny,net_sizex,net_sizey);
 
@@ -148,7 +160,7 @@ function rotate()
 		context.fillText("score: "+score,width-350,0);
 		context.font='italic 30px sans-serif';
 		context.fillStyle='black';
-		context.fillText("version: 1.2.1",width-350,150);
+		context.fillText("version: 1.2.2",width-350,150);
 		//rotate
 		nowinTime+=0.05;		
 		if (nowinTime>=inTime)
@@ -262,12 +274,12 @@ function rotate()
 		}
 		
 		//draw
-		context_fish.drawImage(imgs[num-1],-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
-		if(num<27){
+		context_fish.drawImage(image,-0.5*fish_sizex,-0.5*fish_sizey,fish_sizex,fish_sizey);
+/*		if(num<27){
 			num++;
 		}else{
 			num = 1;
-		}
+		}*/
 		//image=imgs[pic_num-1];
 		if(distime<0)
 		{			
@@ -333,7 +345,7 @@ function loadImg(){
 				fish_png ="fish_png/fish_0"+pic_num+".png";
 			}
 			image.src = fish_png;
-			imgs.push(image);
+			//imgs.push(image);
 		}
 	}catch(e){
 		alert("资源加载失败！");
